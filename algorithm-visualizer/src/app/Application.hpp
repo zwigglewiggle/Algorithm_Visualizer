@@ -6,9 +6,6 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-class Renderer;
-class UiManager;
-class PlaybackController;
 
 class Application
 {
@@ -36,9 +33,9 @@ private:
 private:
     sf::RenderWindow m_window;
     AppState m_state;
-    bool m_initialized = false;
-    bool m_running = false;
-    float m_lastDeltaTimeSeconds = 0.0f;
-    sf::Clock m_frameClock;
+    bool m_initialized;
+    bool m_running ;
+    float m_lastDeltaTimeSeconds ;
+   
 
 };

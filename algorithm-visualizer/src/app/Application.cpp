@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-
+using namespace av;
 Application::Application(){
     m_initialized = false;
     m_running = false;
@@ -17,20 +17,21 @@ Application::~Application(){
 Result Application::initialize(){
     if(m_initialized){
        //implementieren, wenn Result fertig
-        return true;
+        return Result::success("already initialized");
     }
-    if(createWindow().isFailure){
+    if(createWindow().isError()){
         //auch hier result
-        return false;
+        return Result::failure(StatusCode::InitializationFailed, "failed to create window");
     };
     initializeState();
     m_initialized = true;
-    return StatusCode::Ok;
+    return Result::success();
 }
 Result Application::createWindow(){
     int xwidth = 1280;
     int yheight = 720;
     std::string title = "Algorithm Visualizer";
+    return Result::success();
     
 }
 void Application::initializeState(){
@@ -40,10 +41,14 @@ void Application::run(){
     if(!m_initialized){
         return;
     }
+    m_running = true;
+    while(m_running){
     processEvents();
-    //hier zeitmessung einfügen
+    //deltatime berechnen
     update(2);
     render();
+    }
+    m_running = false;
 }
 void Application::processEvents()
 {
@@ -75,7 +80,7 @@ void Application::processEvents()
     }
 }
 void Application::update(float deltaTimeSeconds){
-    if(m_lastDeltaTimeSeconds < 0.0f)){
+    if(m_lastDeltaTimeSeconds < 0.0f){
         return;
     }
     m_lastDeltaTimeSeconds = deltaTimeSeconds;
@@ -89,4 +94,9 @@ void Application::render(){
 bool Application::isInitialized() const{
     return m_initialized;
 }
-
+const AppState& Application::getState() const{
+    return m_state;
+}
+AppState& Application::getState(){
+    return m_state;
+}
