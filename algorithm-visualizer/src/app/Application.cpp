@@ -28,12 +28,19 @@ Result Application::initialize(){
     return Result::success();
 }
 Result Application::createWindow(){
+   
     int xwidth = 1280;
     int yheight = 720;
     std::string title = "Algorithm Visualizer";
-    return Result::success();
     
+    // You are missing the actual creation call here!
+    // Without this, m_window remains uninitialized and nothing will show up.
+    m_window.create(sf::VideoMode(xwidth, yheight), title); 
+
+    return Result::success();
 }
+    
+
 void Application::initializeState(){
     m_state = AppState();
 }

@@ -1,0 +1,3 @@
+/home/sebastian/Desktop/Coding_Projects/Algorithm_Visualizer/algorithm-visualizer/build/CMakeFiles/algorithm_visualizer.dir
+/home/sebastian/Desktop/Coding_Projects/Algorithm_Visualizer/algorithm-visualizer/build/CMakeFiles/edit_cache.dir
+/home/sebastian/Desktop/Coding_Projects/Algorithm_Visualizer/algorithm-visualizer/build/CMakeFiles/rebuild_cache.dir

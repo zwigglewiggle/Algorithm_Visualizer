@@ -34,8 +34,8 @@ private:
     sf::RenderWindow m_window;
     AppState m_state;
     bool m_initialized;
-    bool m_running ;
-    float m_lastDeltaTimeSeconds ;
+    bool m_running;
+    float m_lastDeltaTimeSeconds;
    
 
 };

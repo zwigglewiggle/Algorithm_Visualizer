@@ -12,3 +12,10 @@ add_executable(algorithm_visualizer
 )
 
 target_include_directories(algorithm_visualizer PRIVATE src)
+# 1. Find the SFML package and the required components
+find_package(SFML 2 COMPONENTS graphics window system REQUIRED)
+
+# ... (your add_executable line is probably here) ...
+
+# 2. Link the SFML libraries to your executable
+target_link_libraries(algorithm_visualizer PRIVATE sfml-graphics sfml-window sfml-system)
