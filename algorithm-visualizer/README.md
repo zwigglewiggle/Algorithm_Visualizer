@@ -1,16 +1,23 @@
 # Algorithm Visualizer
 
-Ein modular aufgebauter Algorithmus-Visualisierer in C++20. Das aktuelle MVP setzt den in den Dokumentationsdateien beschriebenen Kern um: Datengenerierung, Bubble-Sort-Schrittmodell, Playback-Steuerung, Rendering-Schicht und eine minimal steuerbare Anwendung. Da in der Build-Umgebung keine SFML-Entwicklungsbibliothek verfügbar ist, nutzt das Projekt derzeit ein terminalbasiertes Renderer-MVP mit derselben Schichtenstruktur.
+Ein modularer Algorithmus-Visualisierer in **C++20** mit sauber getrennten Schichten für Algorithmik, Playback, Rendering und UI. Das Projekt liefert aktuell ein bewusst schlankes, aber hochwertig aufbereitetes **Terminal-MVP**: Bubble Sort wird als Snapshot-Timeline berechnet und in einer modernen, ANSI-basierten Neon-UI als animiertes Dashboard ausgegeben.
 
-## Umgesetzte MVP-Bausteine
-- sauberes CMake-Projekt mit wiederverwendbarer `av_core`-Bibliothek
-- `AppState` für globalen Anwendungs-, Algorithmus- und Playback-Zustand
-- `DataSet` und `DataGenerator` mit Presets: Random, Sorted, Reversed, Nearly Sorted, Fixed
-- `BubbleSort` als Referenzalgorithmus mit expliziten `AlgorithmStep`s
-- `PlaybackController` und `Timeline` für Laden, Abspielen, Pausieren, Reset und Step-Forward
-- `Renderer` + `ArrayView` zur ASCII-/Terminal-Visualisierung der Array-Zustände
-- minimale UI-Steuerlogik über `UiManager`
-- automatisierte Tests für Daten, Sorting und Playback
+## Aktueller Stand
+
+### Was heute funktioniert
+- CMake-Projekt mit wiederverwendbarer Kernbibliothek `av_core`
+- Bubble Sort als vollständig integrierter Referenzalgorithmus
+- Snapshot-basierte Timeline mit `AlgorithmStep`, `Metrics` und `sortedMask`
+- Playback mit Laden, Start/Pause, Reset, Speed-Konzept und Step-Tracking
+- moderne Terminal-UI mit Kartenlayout, Fortschrittsanzeige, Legende und farbcodierter Datenansicht
+- Datengenerierung mit Presets: `Random`, `Sorted`, `Reversed`, `NearlySorted`, `Fixed`
+- automatisierte Tests für Datenlogik, Playback und Sortierung
+
+### Derzeit bewusst noch nicht umgesetzt
+- natives Fenster-Rendering über SFML / ImGui
+- echte interaktive Eingabesteuerung während der Laufzeit
+- zusätzliche Sortier- oder Graphalgorithmen im Runtime-Menü
+- persistente Theme-Auswahl oder Konfigurations-UI
 
 ## Build
 ```bash
@@ -28,15 +35,27 @@ ctest --test-dir build --output-on-failure
 ./build/algorithm_visualizer
 ```
 
-## Architekturüberblick
-- **Algorithm Layer:** `src/algorithms/common`, `src/algorithms/sorting`
-- **Playback Layer:** `src/playback`
-- **Rendering Layer:** `src/rendering`
-- **UI Layer:** `src/ui`
-- **App/Core Layer:** `src/app`, `src/core`
+## Projektstruktur
+- `src/app` – Initialisierung, globaler Zustand, Ablaufsteuerung
+- `src/algorithms` – Algorithmen, Snapshots und Metriken
+- `src/data` – Datengenerierung und Presets
+- `src/playback` – Timeline und PlaybackController
+- `src/rendering` – Renderer, Theme-nahe Darstellung, Array-View
+- `src/ui` – UI-nahe Steuerlogik für Playback-Aktionen
+- `src/tests` – kleine ausführbare Regressionstests
+- `docs` – Architektur, Roadmap und Umsetzungsstand
 
-## Nächste sinnvolle Schritte
-- SFML- oder ImGui-Frontend auf die vorhandene Kernlogik setzen
-- weitere Sortieralgorithmen ergänzen
-- echte Benutzerinteraktion statt Demo-Playback im `Application::run()`-Loop
-- Metriken pro Schritt statt nur als Gesamtergebnis verfeinern
+## UI-Konzept des aktuellen MVP
+Die Anwendung simuliert einen modernen „dashboardartigen“ Look direkt im Terminal:
+- **Hero Header** mit Produkt-Branding
+- **Overview Card** mit Status, Schritt und Progress-Bar
+- **Metrics Card** mit Live-Zwischenständen pro Algorithmus-Schritt
+- **Data View Card** mit farblich markierten Balken für Compare / Swap / Sorted
+- **Legend Card** als schnelle visuelle Hilfe
+
+## Nächste sinnvolle Ausbaustufen
+1. SFML- oder ImGui-Frontend auf dieselbe Kernlogik setzen
+2. zusätzliche Sortieralgorithmen in `src/algorithms/sorting` implementieren
+3. Interaktion per Tastatur oder GUI in den Hauptloop integrieren
+4. Theme- und Konfigurationsdateien aktiv an den Renderer anbinden
+5. Graphalgorithmen als zweite Visualisierungskategorie ergänzen

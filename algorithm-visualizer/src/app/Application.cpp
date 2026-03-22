@@ -1,6 +1,8 @@
 #include "app/Application.hpp"
 
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 namespace av {
 Application::Application() = default;
@@ -36,12 +38,18 @@ void Application::run() {
         return;
     }
 
+    render();
+    std::this_thread::sleep_for(std::chrono::milliseconds(160));
+
     m_uiManager.playPause(m_state, m_playback);
-    for (int tick = 0; tick < 5 && m_playback.state() != PlaybackState::Finished; ++tick) {
+    for (int tick = 0; tick < 8 && m_playback.state() != PlaybackState::Finished; ++tick) {
         update(0.25f);
         render();
-        std::cout << "---\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(220));
     }
+
+    m_uiManager.reset(m_state, m_playback);
+    render();
 }
 
 void Application::update(float deltaTimeSeconds) {
