@@ -1,41 +1,39 @@
 #pragma once
 
+#include "algorithms/common/Algorithm.hpp"
+#include "algorithms/common/DataSet.hpp"
+#include "algorithms/sorting/BubbleSort.hpp"
 #include "app/AppState.hpp"
 #include "core/Result.hpp"
+#include "data/DataGenerator.hpp"
+#include "playback/PlaybackController.hpp"
+#include "rendering/Renderer.hpp"
+#include "ui/UiManager.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <memory>
-
-
-class Application
-{
+namespace av {
+class Application {
 public:
     Application();
-    ~Application();
 
-    av::Result initialize();
+    Result initialize();
     void run();
 
-    void update(float deltaTimeSeconds);
-    void render();
-    void processEvents();
-
     bool isInitialized() const;
-
     AppState& getState();
     const AppState& getState() const;
 
 private:
-    av::Result createWindow();
     void initializeState();
-    void shutdown();
+    void update(float deltaTimeSeconds);
+    void render();
+    void rebuildVisualization();
 
-private:
-    sf::RenderWindow m_window;
-    AppState m_state;
-    bool m_initialized;
-    bool m_running;
-    float m_lastDeltaTimeSeconds;
-   
-
+    AppState m_state{};
+    Renderer m_renderer{};
+    UiManager m_uiManager{};
+    PlaybackController m_playback{};
+    DataSet m_dataSet{};
+    BubbleSort m_bubbleSort{};
+    bool m_initialized{false};
 };
+} // namespace av

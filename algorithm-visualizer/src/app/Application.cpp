@@ -1,109 +1,64 @@
 #include "app/Application.hpp"
-#include <SFML/Graphics.hpp>
+
 #include <iostream>
-#include <string>
 
-using namespace av;
-Application::Application(){
-    m_initialized = false;
-    m_running = false;
-    m_lastDeltaTimeSeconds = 0.0f;
-}
+namespace av {
+Application::Application() = default;
 
-Application::~Application(){
-
-
-}
-Result Application::initialize(){
-    if(m_initialized){
-       //implementieren, wenn Result fertig
+Result Application::initialize() {
+    if (m_initialized) {
         return Result::success("already initialized");
     }
-    if(createWindow().isError()){
-        //auch hier result
-        return Result::failure(StatusCode::InitializationFailed, "failed to create window");
-    };
+
     initializeState();
+    rebuildVisualization();
     m_initialized = true;
     return Result::success();
 }
-Result Application::createWindow(){
-   
-    int xwidth = 1280;
-    int yheight = 720;
-    std::string title = "Algorithm Visualizer";
-    
-    // You are missing the actual creation call here!
-    // Without this, m_window remains uninitialized and nothing will show up.
-    m_window.create(sf::VideoMode(xwidth, yheight), title); 
 
-    return Result::success();
-}
-    
-
-void Application::initializeState(){
+void Application::initializeState() {
     m_state = AppState();
+    m_playback.setSpeed(m_state.getPlaybackSpeed());
 }
-void Application::run(){
-    if(!m_initialized){
+
+void Application::rebuildVisualization() {
+    m_dataSet = DataGenerator::generate(m_state.getDatasetSize(), m_state.getPresetType());
+    const AlgorithmContext context{};
+    const auto result = m_bubbleSort.run(m_dataSet, context);
+    m_playback.load(result);
+    m_playback.setSpeed(m_state.getPlaybackSpeed());
+    m_state.setRegenerateRequested(false);
+    m_state.resetPlaybackState();
+}
+
+void Application::run() {
+    if (!m_initialized) {
         return;
     }
-    m_running = true;
-    while(m_running){
-    processEvents();
-    //deltatime berechnen
-    update(2);
-    render();
-    }
-    m_running = false;
-}
-void Application::processEvents()
-{
-    sf::Event event{};
 
-    while (m_window.pollEvent(event))
-    {
-        if (event.type == sf::Event::Closed)
-        {
-            m_running = false;
-            m_window.close();
-            return;
-        }
-
-        if (event.type == sf::Event::KeyPressed)
-        {
-            if (event.key.code == sf::Keyboard::Escape)
-            {
-                m_running = false;
-                m_window.close();
-                return;
-            }
-        }
-
-        if (event.type == sf::Event::Resized)
-        {
-            // Aktuell ignorieren.
-        }
+    m_uiManager.playPause(m_state, m_playback);
+    for (int tick = 0; tick < 5 && m_playback.state() != PlaybackState::Finished; ++tick) {
+        update(0.25f);
+        render();
+        std::cout << "---\n";
     }
 }
-void Application::update(float deltaTimeSeconds){
-    if(m_lastDeltaTimeSeconds < 0.0f){
-        return;
-    }
-    m_lastDeltaTimeSeconds = deltaTimeSeconds;
-}
-void Application::render(){
-    m_window.clear();
-    //hier kommt später was es tun soll
 
-    m_window.display();
+void Application::update(float deltaTimeSeconds) {
+    if (m_state.isRegenerateRequested()) {
+        rebuildVisualization();
+    }
+
+    m_playback.update(deltaTimeSeconds);
+    m_state.setCurrentStep(m_playback.currentIndex());
+    m_state.setPlaybackState(m_playback.state());
 }
-bool Application::isInitialized() const{
-    return m_initialized;
+
+void Application::render() {
+    m_renderer.render(std::cout, m_playback);
 }
-const AppState& Application::getState() const{
-    return m_state;
-}
-AppState& Application::getState(){
-    return m_state;
-}
+
+bool Application::isInitialized() const { return m_initialized; }
+AppState& Application::getState() { return m_state; }
+const AppState& Application::getState() const { return m_state; }
+} // namespace av
